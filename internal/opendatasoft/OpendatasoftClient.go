@@ -30,12 +30,6 @@ func (ods *OpendatasoftClient) GetUpcomingBus(busLineName string, stopName strin
 	var upcomingBus UpcomingBus
 	ods.getRequest(fmt.Sprintf(endpoint, busLineName, stopName, destination), &upcomingBus)
 
-	log.Printf("nhits: %d et size: %d", upcomingBus.NHits, len(upcomingBus.Records))
-	for i, record := range upcomingBus.Records {
-		delay := record.Information.Departure.Sub(time.Now())
-		log.Printf("%d: departure at %s (in %s)", i, record.Information.Departure, delay)
-	}
-
 	return &upcomingBus
 }
 
