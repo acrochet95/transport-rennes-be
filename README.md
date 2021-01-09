@@ -6,7 +6,10 @@ Back-end part of Alexa application for public transport at Rennes developped in 
 
 ## tr-lambda
 
-AWS lambda for Alexa application
+AWS lambda for Alexa application.
+The project uses :
+* AWS Lambda SDK (https://github.com/aws/aws-lambda-go)
+* alexa-sdk-go (https://gitlab.com/dasjott/alexa-sdk-go)
 
 Currently in development.
 
