@@ -52,6 +52,7 @@ func getUpcomingBus(w http.ResponseWriter, r *http.Request) {
 		x[record.Information.Destination] = append(x[record.Information.Destination], record)
 	}
 
+	// TODO: give next departure for each key of x map (destination)
 	// Generate message
 	message := Message{}
 	if upcomingBus.NHits >= 2 {
