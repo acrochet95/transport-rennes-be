@@ -28,14 +28,15 @@ func getUpcomingBus(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&data)
 
-	if data.BusLine == "" || data.Stop == "" || data.Destination == "" {
+	// only the stop name is mandatory
+	if data.Stop == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	upcomingBus := odsClient.GetUpcomingBus(data.BusLine, data.Stop, data.Destination)
-	// If no buses left
+	// If no bus left
 	if upcomingBus.NHits == 0 {
 		json.NewEncoder(w).Encode(Message{"Aucun bus disponible"})
 	}
@@ -44,6 +45,12 @@ func getUpcomingBus(w http.ResponseWriter, r *http.Request) {
 	sort.SliceStable(upcomingBus.Records, func(i, j int) bool {
 		return upcomingBus.Records[i].Information.Departure.Before(upcomingBus.Records[j].Information.Departure)
 	})
+
+	// store records by destionation
+	x := make(map[string][]opendatasoft.UpcomingBusRecord)
+	for _, record := range upcomingBus.Records {
+		x[record.Information.Destination] = append(x[record.Information.Destination], record)
+	}
 
 	// Generate message
 	message := Message{}

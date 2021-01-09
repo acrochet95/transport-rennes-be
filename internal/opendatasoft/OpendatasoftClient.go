@@ -8,9 +8,16 @@ import (
 	"time"
 )
 
-const endpoint string = "/api/records/1.0/search/?dataset=tco-bus-circulation-passages-tr" +
+const endpointAll string = "/api/records/1.0/search/?dataset=tco-bus-circulation-passages-tr" +
 	"&q=&facet=nomcourtligne&facet=destination&facet=precision&facet=arrte&facet=nomarret" +
 	"&refine.nomcourtligne=%s&refine.nomarret=%s&refine.destination=%s&refine.precision=Temps+réel"
+
+const endpointAllButDestionation string = "/api/records/1.0/search/?dataset=tco-bus-circulation-passages-tr" +
+	"&q=&facet=nomcourtligne&facet=precision&facet=arrte&facet=nomarret&refine.nomcourtligne=%s" +
+	"&refine.nomarret=%s&refine.precision=Temps+réel"
+
+const endpointOnlyStopName string = "/api/records/1.0/search/?dataset=tco-bus-circulation-passages-tr" +
+	"&q=&facet=precision&facet=nomarret&refine.nomarret=%s&refine.precision=Temps+réel"
 
 type OpendatasoftClient struct {
 	client *http.Client
@@ -28,7 +35,17 @@ func New(config ODSConfig) *OpendatasoftClient {
 
 func (ods *OpendatasoftClient) GetUpcomingBus(busLineName string, stopName string, destination string) *UpcomingBus {
 	var upcomingBus UpcomingBus
-	ods.getRequest(fmt.Sprintf(endpoint, busLineName, stopName, destination), &upcomingBus)
+
+	if destination == "" && busLineName == "" {
+		// Search bus by stop name
+		ods.getRequest(fmt.Sprintf(endpointOnlyStopName, stopName), &upcomingBus)
+	} else if destination == "" && busLineName != "" {
+		// Seach bus by bus line name and stop name
+		ods.getRequest(fmt.Sprintf(endpointAllButDestionation, busLineName, stopName), &upcomingBus)
+	} else {
+		// Seach bus by bus line name, destination and stop name
+		ods.getRequest(fmt.Sprintf(endpointAll, busLineName, stopName, destination), &upcomingBus)
+	}
 
 	return &upcomingBus
 }
