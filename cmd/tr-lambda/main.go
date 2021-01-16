@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	skill.Initialize()
+
 	alexa.AppID = "skill-id"
 	alexa.Handlers = skill.Handlers
 	alexa.LocaleStrings = skill.Locales
