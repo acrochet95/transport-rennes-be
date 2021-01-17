@@ -1,7 +1,6 @@
 package skill
 
 import (
-	"fmt"
 	"os"
 	"sort"
 	"time"
@@ -19,7 +18,7 @@ func Initialize() {
 
 var Handlers = alexa.IntentHandlers{
 	"LaunchRequest": func(c *alexa.Context) {
-		c.Tell(c.T("WELCOME_MSG"))
+		c.Ask(c.T("WELCOME_MSG"))
 	},
 	"AMAZON.HelpIntent": func(c *alexa.Context) {
 		c.Tell(c.T("HELP"))
@@ -45,6 +44,7 @@ func upcomingBus(c *alexa.Context) {
 	// If no bus left
 	if upcomingBus.NHits == 0 {
 		c.Tell(c.T("NO_BUS_AVAILABLE"))
+		return
 	}
 
 	// sort records by departure time
@@ -63,11 +63,18 @@ func upcomingBus(c *alexa.Context) {
 	// Loop over destination
 	for destination, busList := range x {
 		if len(busList) >= 2 {
-			message = message + fmt.Sprintf(c.T("UPCOMING_TWO_BUSES_MSG"), busName, busStop, destination,
-				getDelay(&busList[0].Information.Departure),
-				getDelay(&busList[1].Information.Departure))
+			message = message + c.TR("UPCOMING_TWO_BUSES_MSG",
+				alexa.R{"bus": busList[0].Information.BusLineName,
+					"busstop":     busList[0].Information.StopName,
+					"destination": destination,
+					"dep1":        getDelay(&busList[0].Information.Departure),
+					"dep2":        getDelay(&busList[1].Information.Departure)})
 		} else if len(busList) == 1 {
-			message = message + fmt.Sprintf(c.T("UPCOMING_ONE_BUS_MSG"), busName, busStop, destination, getDelay(&busList[0].Information.Departure))
+			message = message + c.TR("UPCOMING_ONE_BUS_MSG",
+				alexa.R{"bus": busList[0].Information.BusLineName,
+					"busstop":     busList[0].Information.StopName,
+					"destination": destination,
+					"dep1":        getDelay(&busList[0].Information.Departure)})
 		}
 	}
 
