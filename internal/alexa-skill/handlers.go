@@ -43,7 +43,7 @@ func upcomingBus(c *alexa.Context) {
 
 	// If no bus left
 	if upcomingBus.NHits == 0 {
-		c.Tell(c.T("NO_BUS_AVAILABLE"))
+		c.Tell(c.TR("NO_BUS_AVAILABLE", alexa.R{"bus": busName.Value, "busstop": busStop.Value}))
 		return
 	}
 
