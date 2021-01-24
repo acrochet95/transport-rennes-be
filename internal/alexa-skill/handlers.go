@@ -47,6 +47,12 @@ func upcomingBus(c *alexa.Context) {
 		return
 	}
 
+	// Too many available buses (alexa asks for more precised request)
+	if upcomingBus.NHits >= 10 {
+		c.Ask(c.TR("TOO_MANY_BUSES", alexa.R{"busstop": busStop.Value}))
+		return
+	}
+
 	// sort records by departure time
 	sort.SliceStable(upcomingBus.Records, func(i, j int) bool {
 		return upcomingBus.Records[i].Information.Departure.Before(upcomingBus.Records[j].Information.Departure)
