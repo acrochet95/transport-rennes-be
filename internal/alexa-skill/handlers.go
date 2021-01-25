@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/acrochet95/transport-rennes-be/internal/opendatasoft"
-	"gitlab.com/dasjott/alexa-sdk-go"
+	"github.com/dasjott/alexa-sdk-go"
 )
 
 var odsClient *opendatasoft.OpendatasoftClient

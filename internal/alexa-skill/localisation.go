@@ -1,6 +1,6 @@
 package skill
 
-import "gitlab.com/dasjott/alexa-sdk-go"
+import "github.com/dasjott/alexa-sdk-go"
 
 var Locales = alexa.Localisation{
 	"fr-FR": alexa.Translation{
