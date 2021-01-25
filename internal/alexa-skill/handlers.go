@@ -21,10 +21,10 @@ var Handlers = alexa.IntentHandlers{
 		c.Ask(c.T("WELCOME_MSG"))
 	},
 	"AMAZON.HelpIntent": func(c *alexa.Context) {
-		c.Tell(c.T("HELP"))
+		c.Ask(c.T("HELP_MSG"))
 	},
 	"AMAZON.FallbackIntent": func(c *alexa.Context) {
-		c.Tell(c.T("ERROR_MSG"))
+		c.Ask(c.T("ERROR_MSG"))
 	},
 	"UpcomingBusIntent":   upcomingBus,
 	"AMAZON.StopIntent":   bye,
