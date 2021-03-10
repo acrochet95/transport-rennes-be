@@ -1,7 +1,6 @@
 package skill
 
 import (
-	"log"
 	"os"
 	"sort"
 	"time"
@@ -29,7 +28,8 @@ var Handlers = alexa.IntentHandlers{
 		c.Ask(c.T("ERROR_MSG"))
 	},
 	"UpcomingBusIntent":   upcomingBus,
-	"AddToFavorite":       addToFavorite,
+	"AddToFavorite":       addFavorite,
+	"DeleteFavorite":      deleteFavorite,
 	"AMAZON.StopIntent":   bye,
 	"AMAZON.CancelIntent": bye,
 }
@@ -96,14 +96,37 @@ func getDelay(departure *time.Time) int {
 	return int(departure.Sub(time.Now().UTC()).Minutes())
 }
 
-func addToFavorite(c *alexa.Context) {
+func addFavorite(c *alexa.Context) {
 	busStop := c.Slot("busstop")
 
 	err := db.AddFavoriteBusStop(c.System.User.ID, busStop.Value)
 	if err != nil {
-		log.Panicf(" %s", err.Error())
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
+		return
 	}
 
 	// Send the final message
 	c.Tell(c.TR("FAVORITE_SAVED", alexa.R{"busstop": busStop.Value}))
+}
+
+func deleteFavorite(c *alexa.Context) {
+	favoriteBusStop, err := db.GetFavoriteBusStop(c.System.User.ID)
+	if err != nil {
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
+		return
+	}
+
+	if favoriteBusStop == nil {
+		c.Tell(c.T("NO_FAVORITE"))
+		return
+	}
+
+	err = db.DeleteFavoriteBusStop(c.System.User.ID)
+	if err != nil {
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
+		return
+	}
+
+	// Send the final message
+	c.Tell(c.T("FAVORITE_DELETED"))
 }
