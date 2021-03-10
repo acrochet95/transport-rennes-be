@@ -1,10 +1,12 @@
 package skill
 
 import (
+	"log"
 	"os"
 	"sort"
 	"time"
 
+	db "github.com/acrochet95/transport-rennes-be/internal/dynamoDB"
 	"github.com/acrochet95/transport-rennes-be/internal/opendatasoft"
 	"github.com/dasjott/alexa-sdk-go"
 )
@@ -27,6 +29,7 @@ var Handlers = alexa.IntentHandlers{
 		c.Ask(c.T("ERROR_MSG"))
 	},
 	"UpcomingBusIntent":   upcomingBus,
+	"AddToFavorite":       addToFavorite,
 	"AMAZON.StopIntent":   bye,
 	"AMAZON.CancelIntent": bye,
 }
@@ -91,4 +94,16 @@ func upcomingBus(c *alexa.Context) {
 // Return delay before departure in minutes
 func getDelay(departure *time.Time) int {
 	return int(departure.Sub(time.Now().UTC()).Minutes())
+}
+
+func addToFavorite(c *alexa.Context) {
+	busStop := c.Slot("busstop")
+
+	err := db.AddFavoriteBusStop(c.System.User.ID, busStop.Value)
+	if err != nil {
+		log.Panicf(" %s", err.Error())
+	}
+
+	// Send the final message
+	c.Tell(c.TR("FAVORITE_SAVED", alexa.R{"busstop": busStop.Value}))
 }
