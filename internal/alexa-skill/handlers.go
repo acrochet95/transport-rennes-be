@@ -29,8 +29,8 @@ var Handlers = alexa.IntentHandlers{
 	},
 	"UpcomingBusIntent":         upcomingBus,
 	"UpcomingFavoriteBusIntent": upcomingFavoriteBus,
-	"AddToFavorite":             addFavorite,
-	"DeleteFavorite":            deleteFavorite,
+	"AddToFavoriteIntent":       addFavorite,
+	"DeleteFavoriteIntent":      deleteFavorite,
 	"AMAZON.StopIntent":         bye,
 	"AMAZON.CancelIntent":       bye,
 }
