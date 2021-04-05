@@ -27,11 +27,12 @@ var Handlers = alexa.IntentHandlers{
 	"AMAZON.FallbackIntent": func(c *alexa.Context) {
 		c.Ask(c.T("ERROR_MSG"))
 	},
-	"UpcomingBusIntent":   upcomingBus,
-	"AddToFavorite":       addFavorite,
-	"DeleteFavorite":      deleteFavorite,
-	"AMAZON.StopIntent":   bye,
-	"AMAZON.CancelIntent": bye,
+	"UpcomingBusIntent":         upcomingBus,
+	"UpcomingFavoriteBusIntent": upcomingFavoriteBus,
+	"AddToFavorite":             addFavorite,
+	"DeleteFavorite":            deleteFavorite,
+	"AMAZON.StopIntent":         bye,
+	"AMAZON.CancelIntent":       bye,
 }
 
 func bye(c *alexa.Context) {
@@ -42,17 +43,38 @@ func upcomingBus(c *alexa.Context) {
 	busStop := c.Slot("busstop")
 	busName := c.Slot("bus")
 
-	upcomingBus := odsClient.GetUpcomingBus(busName.Value, busStop.Value, "")
+	upcomingBusCommon(c, busStop.Value, busName.Value)
+}
+
+func upcomingFavoriteBus(c *alexa.Context) {
+	busName := c.Slot("bus")
+
+	favoriteBusStop, err := db.GetFavoriteBusStop(c.System.User.ID)
+	if err != nil {
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
+		return
+	}
+
+	if favoriteBusStop == nil {
+		c.Tell(c.T("NO_FAVORITE"))
+		return
+	}
+
+	upcomingBusCommon(c, favoriteBusStop.BusStop, busName.Value)
+}
+
+func upcomingBusCommon(c *alexa.Context, busStop string, busName string) {
+	upcomingBus := odsClient.GetUpcomingBus(busName, busStop, "")
 
 	// If no bus left
 	if upcomingBus.NHits == 0 {
-		c.Tell(c.TR("NO_BUS_AVAILABLE", alexa.R{"bus": busName.Value, "busstop": busStop.Value}))
+		c.Tell(c.TR("NO_BUS_AVAILABLE", alexa.R{"bus": busName, "busstop": busStop}))
 		return
 	}
 
 	// Too many available buses (alexa asks for more precised request)
 	if upcomingBus.NHits >= 10 {
-		c.Ask(c.TR("TOO_MANY_BUSES", alexa.R{"busstop": busStop.Value}))
+		c.Ask(c.TR("TOO_MANY_BUSES", alexa.R{"busstop": busStop}))
 		return
 	}
 
