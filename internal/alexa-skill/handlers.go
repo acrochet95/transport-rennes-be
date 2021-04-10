@@ -45,6 +45,7 @@ var Handlers = alexa.IntentHandlers{
 	"DeleteFavoriteIntent":      deleteFavorite,
 	"AMAZON.StopIntent":         bye,
 	"AMAZON.CancelIntent":       bye,
+	"SessionEndedRequest":       bye,
 }
 
 func bye(c *alexa.Context) {

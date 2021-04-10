@@ -11,7 +11,19 @@ The project uses :
 * AWS Lambda SDK (https://github.com/aws/aws-lambda-go)
 * alexa-sdk-go (https://github.com/dasjott/alexa-sdk-go)
 
-Currently in development.
+### Build
+
+In PowerShell, run the following:
+
+```sh
+$env:GOOS = "linux"
+$env:CGO_ENABLED = "0"
+$env:GOARCH = "amd64"
+go build -o main .\cmd\tr-lambda\main.go
+~\Go\Bin\build-lambda-zip.exe -output main.zip main
+```
+
+Have a look at https://docs.aws.amazon.com/lambda/latest/dg/golang-package.html for more information.
 
 ## tr-server
 
