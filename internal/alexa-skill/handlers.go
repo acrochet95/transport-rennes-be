@@ -10,18 +10,6 @@ import (
 	"github.com/dasjott/alexa-sdk-go"
 )
 
-/*
-
-Say function has been added to alexa-sdk-go locally to offer
-an answer without ending the current session
-
-// Say something to the user without ending session
-func (c *Context) Say(speech string) *Cardable {
-	c.response.OutputSSML(speech)
-	return &Cardable{c}
-}
-*/
-
 var odsClient *opendatasoft.OpendatasoftClient
 
 func Initialize() {
@@ -64,12 +52,12 @@ func upcomingFavoriteBus(c *alexa.Context) {
 
 	favoriteBusStop, err := db.GetFavoriteBusStop(c.System.User.ID)
 	if err != nil {
-		c.Say(c.T("FAVORITE_UNAVAILABLE"))
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
 		return
 	}
 
 	if favoriteBusStop == nil {
-		c.Say(c.T("NO_FAVORITE"))
+		c.Tell(c.T("NO_FAVORITE"))
 		return
 	}
 
@@ -81,7 +69,7 @@ func upcomingBusCommon(c *alexa.Context, busStop string, busName string) {
 
 	// If no bus left
 	if upcomingBus.NHits == 0 {
-		c.Say(c.TR("NO_BUS_AVAILABLE", alexa.R{"bus": busName, "busstop": busStop}))
+		c.Tell(c.TR("NO_BUS_AVAILABLE", alexa.R{"bus": busName, "busstop": busStop}))
 		return
 	}
 
@@ -123,7 +111,7 @@ func upcomingBusCommon(c *alexa.Context, busStop string, busName string) {
 	}
 
 	// Send the final message
-	c.Say(message)
+	c.Tell(message)
 }
 
 // Return delay before departure in minutes
@@ -136,32 +124,32 @@ func addFavorite(c *alexa.Context) {
 
 	err := db.AddFavoriteBusStop(c.System.User.ID, busStop.Value)
 	if err != nil {
-		c.Say(c.T("FAVORITE_UNAVAILABLE"))
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
 		return
 	}
 
 	// Send the final message
-	c.Say(c.TR("FAVORITE_SAVED", alexa.R{"busstop": busStop.Value}))
+	c.Tell(c.TR("FAVORITE_SAVED", alexa.R{"busstop": busStop.Value}))
 }
 
 func deleteFavorite(c *alexa.Context) {
 	favoriteBusStop, err := db.GetFavoriteBusStop(c.System.User.ID)
 	if err != nil {
-		c.Say(c.T("FAVORITE_UNAVAILABLE"))
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
 		return
 	}
 
 	if favoriteBusStop == nil {
-		c.Say(c.T("NO_FAVORITE"))
+		c.Tell(c.T("NO_FAVORITE"))
 		return
 	}
 
 	err = db.DeleteFavoriteBusStop(c.System.User.ID)
 	if err != nil {
-		c.Say(c.T("FAVORITE_UNAVAILABLE"))
+		c.Tell(c.T("FAVORITE_UNAVAILABLE"))
 		return
 	}
 
 	// Send the final message
-	c.Say(c.T("FAVORITE_DELETED"))
+	c.Tell(c.T("FAVORITE_DELETED"))
 }
