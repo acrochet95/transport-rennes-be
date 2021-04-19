@@ -18,9 +18,8 @@ func Initialize() {
 }
 
 var Handlers = alexa.IntentHandlers{
-	"LaunchRequest": func(c *alexa.Context) {
-		c.Ask(c.T("WELCOME_MSG"))
-	},
+	"LaunchRequest":    welcome,
+	"HelloWorldIntent": welcome,
 	"AMAZON.HelpIntent": func(c *alexa.Context) {
 		c.Ask(c.T("HELP_MSG"))
 	},
@@ -34,6 +33,10 @@ var Handlers = alexa.IntentHandlers{
 	"AMAZON.StopIntent":         bye,
 	"AMAZON.CancelIntent":       bye,
 	"SessionEndedRequest":       bye,
+}
+
+func welcome(c *alexa.Context) {
+	c.Ask(c.T("WELCOME_MSG"))
 }
 
 func bye(c *alexa.Context) {

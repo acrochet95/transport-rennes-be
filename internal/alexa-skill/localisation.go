@@ -4,7 +4,7 @@ import "github.com/dasjott/alexa-sdk-go"
 
 var Locales = alexa.Localisation{
 	"fr-FR": alexa.Translation{
-		"WELCOME_MSG":            "Bienvenue sur transport rennes! Que voulez vous savoir ?",
+		"WELCOME_MSG":            "Bienvenue sur transport rennes! Vous pouvez me demander quand arrive le prochain bus ?",
 		"UPCOMING_ONE_BUS_MSG":   "Le {bus}, arrêt {busstop}, direction {destination}: prochain départ dans {dep1} minutes. ",
 		"UPCOMING_TWO_BUSES_MSG": "Le {bus}, arrêt {busstop}, direction {destination}: prochain départ dans {dep1} minutes, le suivant dans {dep2} minutes. ",
 		"TOO_MANY_BUSES":         "Beaucoup de bus sont disponibles à l'arrêt {busstop}. Veuillez préciser votre bus dans la question.",
